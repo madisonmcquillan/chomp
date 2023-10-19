@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import fish
 
 from settings import *
 
@@ -19,22 +20,32 @@ seagrass = pygame.image.load("assets/images/seagrass.png").convert()
 sand_top.set_colorkey((0, 0, 0))
 seagrass.set_colorkey((0, 0, 0))
 
-# BLIT SAND TILES ACROSS THE BOTTOM OF THE SCREEN
-for i in range(SCREEN_WIDTH // TILE_SIZE):
-    screen.blit(sand, (i*TILE_SIZE, SCREEN_HEIGHT-TILE_SIZE))
-    screen.blit(sand_top, (i*TILE_SIZE, SCREEN_HEIGHT-2*TILE_SIZE))
+my_fish = fish.Fish(200, 200)
+background = screen.copy()
 
-# randomly place 4 pieces of seagrass along the bottom of the screen
-for i in range(4):
-    x = random.randint(0, SCREEN_WIDTH-TILE_SIZE)
-    y = random.randint(SCREEN_HEIGHT - 2*TILE_SIZE, SCREEN_HEIGHT) - (0.5*TILE_SIZE)
-    screen.blit(seagrass, (x, y))
 
-# draw the CHOMP! title
-text = game_font.render("Chomp!", True, (240, 50, 75))
-screen.blit(text, (SCREEN_WIDTH//2 - text.get_width() // 2, SCREEN_HEIGHT//2 - text.get_height()//2))
+def draw_background():
+    # draw water
+    background.fill(WATER_COLOR)
+    # BLIT SAND TILES ACROSS THE BOTTOM OF THE SCREEN
+    for i in range(SCREEN_WIDTH // TILE_SIZE):
+        background.blit(sand, (i * TILE_SIZE, SCREEN_HEIGHT - TILE_SIZE))
+        background.blit(sand_top, (i * TILE_SIZE, SCREEN_HEIGHT - 2 * TILE_SIZE))
 
-pygame.display.flip()
+    # randomly place 4 pieces of seagrass along the bottom of the screen
+    for i in range(4):
+        x = random.randint(0, SCREEN_WIDTH - TILE_SIZE)
+        y = random.randint(SCREEN_HEIGHT - 2 * TILE_SIZE, SCREEN_HEIGHT) - (0.5 * TILE_SIZE)
+        background.blit(seagrass, (x, y))
+
+    # draw the CHOMP! title
+    text = game_font.render("Chomp!", True, (240, 50, 75))
+    background.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+
+
+draw_background()
+
+
 while True:
     for event in pygame.event.get():
 
@@ -42,3 +53,13 @@ while True:
             print("thanks for playing!")
             pygame.quit()
             sys.exit()
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                my_fish.move_left()
+            if event.key == pygame.K_RIGHT:
+                my_fish.move_right()
+
+        # update game screen
+        screen.blit(background, (0, 0))
+        my_fish.draw(screen)
+        pygame.display.flip()
