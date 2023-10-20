@@ -2,7 +2,6 @@ import pygame
 import sys
 import random
 import fish
-
 from settings import *
 
 pygame.init()
@@ -22,6 +21,7 @@ seagrass.set_colorkey((0, 0, 0))
 
 my_fish = fish.Fish(200, 200)
 background = screen.copy()
+clock = pygame.time.Clock()
 
 
 def draw_background():
@@ -39,7 +39,7 @@ def draw_background():
         background.blit(seagrass, (x, y))
 
     # draw the CHOMP! title
-    text = game_font.render("Chomp!", True, (240, 50, 75))
+    text = game_font.render("Chomp!", True, (100, 150, 75))
     background.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
 
@@ -53,13 +53,31 @@ while True:
             print("thanks for playing!")
             pygame.quit()
             sys.exit()
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
-                my_fish.move_left()
+                my_fish.moving_left = True
             if event.key == pygame.K_RIGHT:
-                my_fish.move_right()
+                my_fish.moving_right = True
+            if event.key == pygame.K_UP:
+                my_fish.moving_up = True
+            if event.key == pygame.K_DOWN:
+                my_fish.moving_down = True
+        elif event.type == pygame.KEYUP:
+            if event.key == pygame.K_LEFT:
+                my_fish.moving_left = False
+            if event.key == pygame.K_RIGHT:
+                my_fish.moving_right = False
+            if event.key == pygame.K_UP:
+                my_fish.moving_up = False
+            if event.key == pygame.K_DOWN:
+                my_fish.moving_down = False
 
         # update game screen
-        screen.blit(background, (0, 0))
-        my_fish.draw(screen)
-        pygame.display.flip()
+
+    screen.blit(background, (0, 0))
+    my_fish.update()
+    my_fish.draw(screen)
+    pygame.display.flip()
+    clock.tick(60)
+
+
