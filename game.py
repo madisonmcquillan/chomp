@@ -2,6 +2,7 @@ import pygame
 import sys
 import random
 import fish
+import minnow
 from settings import *
 
 pygame.init()
@@ -20,6 +21,10 @@ sand_top.set_colorkey((0, 0, 0))
 seagrass.set_colorkey((0, 0, 0))
 
 my_fish = fish.Fish(200, 200)
+my_minnows = []
+for _ in range(NUM_MINNOWS):
+    my_minnows.append(
+        minnow.Minnow(random.randint(0, SCREEN_WIDTH - TILE_SIZE), random.randint(0, WATER_BOTTOM - TILE_SIZE)))
 background = screen.copy()
 clock = pygame.time.Clock()
 
@@ -39,12 +44,11 @@ def draw_background():
         background.blit(seagrass, (x, y))
 
     # draw the CHOMP! title
-    text = game_font.render("Chomp!", True, (100, 150, 75))
-    background.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
+    # text = game_font.render("Chomp!", True, (100, 150, 75))
+    # background.blit(text, (SCREEN_WIDTH // 2 - text.get_width() // 2, SCREEN_HEIGHT // 2 - text.get_height() // 2))
 
 
 draw_background()
-
 
 while True:
     for event in pygame.event.get():
@@ -77,5 +81,7 @@ while True:
     screen.blit(background, (0, 0))
     my_fish.update()
     my_fish.draw(screen)
+    for my_minnow in my_minnows:
+         my_minnow.draw(screen)
     pygame.display.flip()
     clock.tick(60)
